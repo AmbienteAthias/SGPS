@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Processos Seletivos</title>
+    <style>
+        /* Estilos da tela de login */
+        .login-container {
+            background-color: #222;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+            text-align: center;
+            width: 300px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        .login-container img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid orange;
+            background-color: #333;
+            color: orange;
+            border-radius: 4px;
+        }
+
+        .login-container input:focus {
+            outline: none;
+            border-color: orange;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: orange;
+            color: black;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .login-container button:hover {
+            opacity: 0.8;
+        }
+
+        /* Estilos do sistema principal */
+        body {
+            background-color: black;
+            color: orange;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            display: none; /* Inicialmente oculto */
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+        }
+
+        header img {
+            width: 100px;
+            margin-right: 20px;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: orange;
+            text-decoration: none;
+        }
+
+        main {
+            display: none;
+        }
+
+        h2, h3 {
+            border-bottom: 1px solid orange;
+            padding-bottom: 10px;
+        }
+
+        button {
+            background-color: orange;
+            color: black;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        .form-container {
+            background-color: #222;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid orange;
+            background-color: #333;
+            color: orange;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: orange;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid orange;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+        }
+
+        .conta-item {
+            background-color: #666;
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        .search-container {
+            display: flex; /* Adiciona flexbox */
+            align-items: center; /* Alinha verticalmente ao centro */
+            margin: 10px 0; /* Ajusta a margem conforme necessário */
+        }
+
+        .search-container input {
+            flex: 1; /* Faz o input ocupar o espaço disponível */
+            margin-right: 10px; /* Espaço entre o input e o botão */
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div class="login-container" id="loginContainer">
+        <img src="C:\Users\Samsung\OneDrive\Documentos\Athias\Sistema de Gerenciamento Seleção\Athias Negativo.png" alt="Logomarca">
+        <input type="text" id="login" placeholder="Login">
+        <input type="password" id="senha" placeholder="Senha">
+        <button onclick="acessar()">Acessar</button>
+    </div>
+
+    <!-- Sistema Principal (inicialmente oculto) -->
+    <div class="container" id="sistemaContainer">
+        <header>
+            <img src="C:\Users\Samsung\OneDrive\Documentos\Athias\Sistema de Gerenciamento Seleção\Athias.png" alt="Logo do Sistema de Controle de Processos Seletivos">
+            <h1>Sistema de Controle de Processos Seletivos</h1>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#" onclick="showSection('controle-vagas')">Controle de Vagas</a></li>
+                <li><a href="#" onclick="showSection('cadastro-candidatos')">Cadastro de Candidatos</a></li>
+                <li><a href="#" onclick="showSection('financeiro')">Financeiro</a></li>
+                <li><a href="#" onclick="showSection('relatorios')">Relatórios</a></li>
+            </ul>
+        </nav>
+
+        <main id="controle-vagas">
+            <h2>Controle de Vagas</h2>
+            <div class="search-container">
+                <input type="text" id="searchVaga" placeholder="Buscar vaga pelo título" oninput="filtrarVagas()">
+                <button onclick="filtrarVagas()">🔍</button>
+            </div>
+            <button onclick="toggleForm('vagaForm')">Cadastrar Vaga</button>
+            
+            <div id="vagaForm" class="form-container" style="display: none;">
+                <h3>Cadastrar Vaga</h3>
+                <form onsubmit="cadastrarVaga(event)">
+                    <label>Título da Vaga:</label>
+                    <input type="text" id="vagaTitulo" required>
+                    
+                    <label>Descrição da Vaga:</label>
+                    <textarea id="vagaDescricao" required></textarea>
+                    
+                    <label>Perfil Desejado:</label>
+                    <input type="text" id="vagaPerfil" required>
+                    
+                    <label>Média Salarial:</label>
+                    <input type="number" id="vagaSalario" required>
+                    
+                    <label>Empresa:</label>
+                    <input type="text" id="vagaEmpresa" required>
+                    
+                    <label>Valor do Processo (R$):</label>
+                    <input type="number" id="vagaValorProcesso" step="0.01" required>
+                    
+                    <label>Status da Vaga:</label>
+                    <select id="vagaStatus" required>
+                        <option value="Iniciada">Iniciada</option>
+                        <option value="Triagem">Triagem</option>
+                        <option value="Entrevistas">Entrevistas</option>
+                        <option value="Enviado Empresa">Enviado Empresa</option>
+                        <option value="Finalizada">Finalizada</option>
+                    </select>
+                    
+                    <button type="submit">Salvar</button>
+                    <button type="button" id="vagaEditarBtn" style="display: none;" onclick="editarVaga()">Editar</button>
+                </form>
+            </div>
+            
+            <div id="vagaList" class="vaga-list">
+                <div id="vagasCadastradas"></div>
+            </div>
+        </main>
+
+        <main id="cadastro-candidatos">
+            <h2>Cadastro de Candidatos</h2>
+            <div class="search-container">
+                <input type="text" id="searchCandidato" placeholder="Buscar candidato pelo nome" oninput="filtrarCandidatos()">
+                <button onclick="filtrarCandidatos()">🔍</button>
+            </div>
+            <button onclick="toggleForm('candidatoForm')">Cadastrar Novo</button>
+            
+            <div id="candidatoForm" class="form-container" style="display: none;">
+                <h3>Cadastrar Candidato</h3>
+                <form onsubmit="cadastrarCandidato(event)">
+                    <label>Nome:</label>
+                    <input type="text" id="candidatoNome" required>
+                    
+                    <label>Telefone:</label>
+                    <input type="tel" id="candidatoTelefone" required>
+                    
+                    <label>Formação:</label>
+                    <input type="text" id="candidatoFormacao" required>
+                    
+                    <label>E-mail:</label>
+                    <input type="email" id="candidatoEmail" required>
+                    
+                    <label>Data da Entrevista:</label>
+                    <input type="date" id="candidatoData" required>
+                    
+                    <label>Nome do Recrutador:</label>
+                    <input type="text" id="candidatoRecrutador" required>
+                    
+                    <label>Status da Entrevista:</label>
+                    <select id="candidatoStatus" required>
+                        <option>Agendada</option>
+                        <option>Realizada</option>
+                        <option>Cancelada</option>
+                    </select>
+                    
+                    <label>Parecer do Recrutador:</label>
+                    <textarea id="candidatoParecer"></textarea>
+
+                    <label>Vincular Vaga:</label>
+                    <select id="vagaVinculada">
+                        <option value="">Selecione uma vaga</option>
+                    </select>
+                    
+                    <button type="submit">Salvar</button>
+                    <button type="button" id="candidatoEditarBtn" style="display: none;" onclick="editarCandidato()">Editar</button>
+                </form>
+            </div>
+            
+            <div id="candidatoList" class="candidato-list">
+                <div id="candidatosCadastrados"></div>
+            </div>
+        </main>
+
+        <main id="financeiro">
+            <h2>Financeiro</h2>
+            <div>
+                <h3>Contas a Receber</h3>
+                <form id="registrarRecebimento" onsubmit="registrarRecebimento(event)">
+                    <label for="empresaRecebimento">Nome da Empresa:</label>
+                    <select id="empresaRecebimento" required>
+                        <option value="">Selecione uma empresa</option>
+                    </select>
+                    <label for="valorRecebido">Valor Recebido (R$):</label>
+                    <input type="number" id="valorRecebido" step="0.01" required>
+                    <label for="dataRecebimento">Data de Recebimento:</label>
+                    <input type="date" id="dataRecebimento" required>
+                    <button type="submit">Registrar Recebimento</button>
+                </form>
+                <p id="totalReceber">Total a Receber: R$ 0.00</p>
+                <div>
+                    <h3>Relatório Analítico de Contas a Receber</h3>
+                    <table id="relatorioContasReceber">
+                        <thead>
+                            <tr>
+                                <th>Empresa</th>
+                                <th>Valor a Receber (R$)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyRelatorio">
+                            <!-- As contas a receber serão inseridas aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <h3>Contas Recebidas</h3>
+                <div id="contasRecebidas"></div>
+            </div>
+        </main>
+
+        <main id="relatorios">
+            <h2>Relatórios</h2>
+            <p>Aqui você pode gerar relatórios sobre as vagas e candidatos.</p>
+        </main>
+    </div>
+
+    <script>
+        // Função de login
+        function acessar() {
+            const login = document.getElementById('login').value;
+            const senha = document.getElementById('senha').value;
+
+            // Verificação simples de login (substitua por uma lógica real)
+            if (login === "admin" && senha === "admin") {
+                alert('Acesso concedido!');
+                document.getElementById('loginContainer').style.display = 'none'; // Oculta a tela de login
+                document.getElementById('sistemaContainer').style.display = 'block'; // Mostra o sistema
+            } else {
+                alert('Login ou senha incorretos.');
+            }
+        }
+
+        // Funções do sistema (mantenha as funções originais)
+        let vagas = []; 
+        let candidatos = []; 
+        let candidatoId = 0; 
+        let vagaParaEditar = null; 
+        let candidatoParaEditar = null; 
+        let totalReceber = 0; 
+        let contasRecebidas = []; 
+
+        function showSection(sectionId) {
+            document.querySelectorAll('main').forEach(section => {
+                section.style.display = 'none'; 
+            });
+            document.getElementById(sectionId).style.display = 'block'; 
+        }
+
+        function toggleForm(formId) {
+            const form = document.getElementById(formId);
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            if (formId === 'candidatoForm') {
+                atualizarVagasNoFormulario();
+            }
+        }
+
+        function cadastrarVaga(event) {
+            event.preventDefault(); 
+            const novaVaga = {
+                titulo: document.getElementById('vagaTitulo').value,
+                descricao: document.getElementById('vagaDescricao').value,
+                perfil: document.getElementById('vagaPerfil').value,
+                salario: document.getElementById('vagaSalario').value,
+                empresa: document.getElementById('vagaEmpresa').value,
+                valorProcesso: parseFloat(document.getElementById('vagaValorProcesso').value),
+                status: document.getElementById('vagaStatus').value,
+                candidatos: [] 
+            };
+
+            if (vagaParaEditar !== null) {
+                vagas[vagaParaEditar] = novaVaga; 
+                vagaParaEditar = null; 
+                alert("Vaga atualizada com sucesso!");
+            } else {
+                vagas.push(novaVaga); 
+                totalReceber += novaVaga.valorProcesso; 
+                atualizarTotalReceber(); 
+                alert("Vaga cadastrada com sucesso!");
+            }
+
+            document.getElementById('vagaForm').reset(); 
+            document.getElementById('vagaEditarBtn').style.display = 'none'; 
+            filtrarVagas(); 
+            atualizarVagasNoFormulario();
+        }
+
+        function atualizarTotalReceber() {
+            document.getElementById('totalReceber').innerText = `Total a Receber: R$ ${totalReceber.toFixed(2)}`;
+            atualizarRelatorioContasReceber();
+            atualizarEmpresasNoFormulario();
+        }
+
+        function atualizarRelatorioContasReceber() {
+            const relatorioBody = document.getElementById('tbodyRelatorio');
+            relatorioBody.innerHTML = ''; // Limpa o conteúdo anterior
+
+            const contasPorEmpresa = {};
+
+            // Agrupa os valores a receber por empresa
+            vagas.forEach(vaga => {
+                if (!contasPorEmpresa[vaga.empresa]) {
+                    contasPorEmpresa[vaga.empresa] = 0;
+                }
+                contasPorEmpresa[vaga.empresa] += vaga.valorProcesso;
+            });
+
+            // Adiciona as empresas e valores ao relatório
+            for (const [empresa, valor] of Object.entries(contasPorEmpresa)) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${empresa}</td>
+                    <td>R$ ${valor.toFixed(2)}</td>
+                `;
+                relatorioBody.appendChild(row);
+            }
+        }
+
+        function atualizarEmpresasNoFormulario() {
+            const empresaSelect = document.getElementById('empresaRecebimento');
+            empresaSelect.innerHTML = '<option value="">Selecione uma empresa</option>'; 
+
+            const empresasDevedoras = new Set(); // Usar um Set para evitar duplicatas
+
+            vagas.forEach(vaga => {
+                if (vaga.valorProcesso > 0) {
+                    empresasDevedoras.add(vaga.empresa);
+                }
+            });
+
+            empresasDevedoras.forEach(empresa => {
+                const option = document.createElement('option');
+                option.value = empresa;
+                option.textContent = empresa;
+                empresaSelect.appendChild(option);
+            });
+        }
+
+        function filtrarVagas() {
+            const searchTerm = document.getElementById('searchVaga').value.toLowerCase();
+            const vagasCadastradas = document.getElementById('vagasCadastradas');
+            vagasCadastradas.innerHTML = ''; 
+
+            vagas.filter(vaga => vaga.titulo.toLowerCase().includes(searchTerm)).forEach((vaga, index) => {
+                const vagaDiv = document.createElement('div');
+                vagaDiv.className = 'vaga-item';
+                vagaDiv.innerHTML = `
+                    <strong>Título:</strong> ${vaga.titulo} <br>
+                    <strong>Descrição:</strong> ${vaga.descricao} <br>
+                    <strong>Perfil:</strong> ${vaga.perfil} <br>
+                     <strong>Média Salarial:</strong> R$ ${vaga.salario} <br>
+                    <strong>Empresa:</strong> ${vaga.empresa} <br>
+                    <strong>Valor do Processo:</strong> R$ ${vaga.valorProcesso.toFixed(2)} <br>
+                    <strong>Status:</strong> 
+                    <select id="statusSelect${index}" onchange="atualizarStatus(${index})">
+                        <option value="Iniciada" ${vaga.status === 'Iniciada' ? 'selected' : ''}>Iniciada</option>
+                        <option value="Triagem" ${vaga.status === 'Triagem' ? 'selected' : ''}>Triagem</option>
+                        <option value="Entrevistas" ${vaga.status === 'Entrevistas' ? 'selected' : ''}>Entrevistas</option>
+                        <option value="Enviado Empresa" ${vaga.status === 'Enviado Empresa' ? 'selected' : ''}>Enviado Empresa</option>
+                        <option value="Finalizada" ${vaga.status === 'Finalizada' ? 'selected' : ''}>Finalizada</option>
+                    </select>
+                `;
+                vagasCadastradas.appendChild(vagaDiv); 
+            });
+        }
+
+        function atualizarStatus(index) {
+            const select = document.getElementById(`statusSelect${index}`);
+            const novoStatus = select.value;
+            vagas[index].status = novoStatus; 
+            alert(`Status da vaga "${vagas[index].titulo}" atualizado para "${novoStatus}"!`);
+        }
+
+        function atualizarVagasNoFormulario() {
+            const vagaSelect = document.getElementById('vagaVinculada');
+            vagaSelect.innerHTML = '<option value="">Selecione uma vaga</option>'; 
+
+            vagas.forEach(vaga => {
+                if (["Triagem", "Entrevistas", "Enviado Empresa"].includes(vaga.status)) {
+                    const option = document.createElement('option');
+                    option.value = vaga.titulo; 
+                    option.textContent = vaga.titulo;
+                    vagaSelect.appendChild(option);
+                }
+            });
+        }
+
+        function cadastrarCandidato(event) {
+            event.preventDefault(); 
+            const novoCandidato = {
+                id: candidatoId++, 
+                nome: document.getElementById('candidatoNome').value,
+                telefone: document.getElementById('candidatoTelefone').value,
+                formacao: document.getElementById('candidatoFormacao').value,
+                email: document.getElementById('candidatoEmail').value,
+                data: document.getElementById('candidatoData').value,
+                recrutador: document.getElementById('candidatoRecrutador').value,
+                status: document.getElementById('candidatoStatus').value,
+                parecer: document.getElementById('candidatoParecer').value,
+                vagaVinculada: document.getElementById('vagaVinculada').value 
+            };
+
+            if (candidatoParaEditar !== null) {
+                candidatos[candidatoParaEditar] = novoCandidato; 
+                candidatoParaEditar = null; 
+                alert("Candidato atualizado com sucesso!");
+            } else {
+                candidatos.push(novoCandidato); 
+                alert("Candidato cadastrado com sucesso! ID: " + novoCandidato.id); 
+            }
+
+            document.getElementById('candidatoForm').reset(); 
+            document.getElementById('candidatoEditarBtn').style.display = 'none'; 
+            filtrarCandid
+                        document.getElementById('candidatoForm').reset(); 
+            document.getElementById('candidatoEditarBtn').style.display = 'none'; 
+            filtrarCandidatos(); 
+        }
+
+        function filtrarCandidatos() {
+            const searchTerm = document.getElementById('searchCandidato').value.toLowerCase();
+            const candidatosCadastrados = document.getElementById('candidatosCadastrados');
+            candidatosCadastrados.innerHTML = ''; 
+
+            candidatos.filter(candidato => candidato.nome.toLowerCase().includes(searchTerm)).forEach((candidato, index) => {
+                const candidatoDiv = document.createElement('div');
+                candidatoDiv.className = 'candidato-item';
+                candidatoDiv.innerHTML = `
+                    <strong>Nome:</strong> ${candidato.nome} <br>
+                    <strong>Telefone:</strong> ${candidato.telefone} <br>
+                    <strong>Formação:</strong> ${candidato.formacao} <br>
+                    <strong>E-mail:</strong> ${candidato.email} <br>
+                    <strong>Data da Entrevista:</strong> ${candidato.data} <br>
+                    <strong>Nome do Recrutador:</strong> ${candidato.recrutador} <br>
+                    <strong>Status:</strong> ${candidato.status} <br>
+                    <strong>ID:</strong> ${candidato.id} <br>
+                    <strong>Vaga Vinculada:</strong> ${candidato.vagaVinculada} <br>
+                    <button onclick="prepararEdicaoCandidato(${index})">Editar</button>
+                `;
+                candidatosCadastrados.appendChild(candidatoDiv); 
+            });
+        }
+
+        function prepararEdicaoCandidato(index) {
+            candidatoParaEditar = index;
+            const candidato = candidatos[index];
+            document.getElementById('candidatoNome').value = candidato.nome;
+            document.getElementById('candidatoTelefone').value = candidato.telefone;
+            document.getElementById('candidatoFormacao').value = candidato.formacao;
+            document.getElementById('candidatoEmail').value = candidato.email;
+            document.getElementById('candidatoData').value = candidato.data;
+            document.getElementById('candidatoRecrutador').value = candidato.recrutador;
+            document.getElementById('candidatoStatus').value = candidato.status;
+            document.getElementById('candidatoParecer').value = candidato.parecer;
+            document.getElementById('vagaVinculada').value = candidato.vagaVinculada;
+            document.getElementById('candidatoEditarBtn').style.display = 'block';
+            document.getElementById('candidatoForm').style.display = 'block';
+        }
+
+        function registrarRecebimento(event) {
+            event.preventDefault(); 
+            const empresa = document.getElementById('empresaRecebimento').value;
+            const valor = parseFloat(document.getElementById('valorRecebido').value);
+            const data = document.getElementById('dataRecebimento').value;
+
+            // Adiciona o valor recebido e atualiza o total
+            contasRecebidas.push({ empresa, valor, data });
+            totalReceber -= valor; 
+            atualizarTotalReceber(); 
+            renderizarContasRecebidas(); 
+        }
+
+        function renderizarContasRecebidas() {
+            const contasDiv = document.getElementById('contasRecebidas');
+            contasDiv.innerHTML = ''; // Limpa a lista anterior
+
+            contasRecebidas.forEach((conta, index) => {
+                const contaDiv = document.createElement('div');
+                contaDiv.innerHTML = `
+                    <strong>Recebido de:</strong> ${conta.empresa} <br>
+                    <strong>Valor:</strong> R$ ${conta.valor.toFixed(2)} <br>
+                    <strong>Data:</strong> ${conta.data} <br>
+                    <button onclick="removerConta(${index})">Remover</button>
+                `;
+                contasDiv.appendChild(contaDiv);
+            });
+        }
+
+        function removerConta(index) {
+            const valorRemovido = contasRecebidas[index].valor;
+            contasRecebidas.splice(index, 1); // Remove a conta
+            totalReceber += valorRemovido; // Atualiza o total a receber
+            atualizarTotalReceber(); 
+            renderizarContasRecebidas(); 
+        }
+    </script>
+</body>
+</html>
